@@ -47,7 +47,11 @@ jobs:
         uses: docker/metadata-action@v4.0.1
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
+          tags: |
+            type=ref,event=branch
+            type=sha
+            type=raw,value=latest
+          
       - name: push Docker image
         uses: docker/build-push-action@v3
         with:
