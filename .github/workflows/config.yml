@@ -1,9 +1,7 @@
-name: build and push to ghcr
+name: build and push image to ghcr
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
     branches: [ master ]
 
 env:
@@ -35,12 +33,15 @@ jobs:
           distribution: 'microsoft'
           cache: gradle
 
+      - name: make gradlew executable
+        run: chmod +x gradlew
+
       - name: Build with Gradle
         env:
           mongodb_host: localhost
-        run: |
-          chmod +x gradlew
-          ./gradlew build
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build
 
       - name: Extract metadata (tags, labels) for registry
         id: meta
@@ -49,9 +50,8 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=latest
-          
-      - name: push Docker image
-        uses: docker/build-push-action@v3
+      - name: push image to Container registry
+        uses: docker/build-push-action@master
         with:
           context: .
           push: true
