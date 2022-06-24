@@ -42,9 +42,15 @@ jobs:
           chmod +x gradlew
           ./gradlew build
 
+      - name: Extract metadata (tags, labels) for registry
+        id: meta
+        uses: docker/metadata-action@4.01
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
       - name: push Docker image
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: ${{ steps.meta.outputs.tags }}
