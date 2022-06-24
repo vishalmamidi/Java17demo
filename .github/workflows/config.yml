@@ -43,7 +43,7 @@ jobs:
           ./gradlew build
 
       - name: push Docker image
-        uses: docker/build-push-action@master
+        uses: docker/build-push-action@v3
         with:
           context: .
           push: true
